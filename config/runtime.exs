@@ -21,12 +21,11 @@ if System.get_env("PHX_SERVER") do
 end
 
 if config_env() == :prod do
-  database_url =
-    System.get_env("DATABASE_URL") ||
-      raise """
-      environment variable DATABASE_URL is missing.
-      For example: ecto://USER:PASS@HOST/DATABASE
-      """
+  database_url = System.get_env("DATABASE_URL") || "ecto://wages:wages@localhost/wages_prod"
+  # raise """
+  # environment variable DATABASE_URL is missing.
+  # For example: ecto://USER:PASS@HOST/DATABASE
+  # """
 
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
@@ -112,4 +111,48 @@ if config_env() == :prod do
   #     config :swoosh, :api_client, Swoosh.ApiClient.Hackney
   #
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
+
+  config :wages, Wages.Broadway,
+    name: Wages.Broadway,
+    producer: [
+      module: {
+        BroadwayRabbitMQ.Producer,
+        queue: System.get_env("RABBITMQ_QUEUE") || "wages-events",
+        declare: [durable: true],
+        bindings: [{"amq.topic", [routing_key: "wages.*"]}],
+        connection: [
+          username: System.get_env("RABBITMQ_USER") || "guest",
+          password: System.get_env("RABBITMQ_PASSWORD") || "guest",
+          host: System.get_env("RABBITMQ_HOST") || "rabbitmq.wages-dev",
+          port: String.to_integer(System.get_env("RABBITMQ_PORT") || "30672")
+        ]
+      },
+      concurrency: String.to_integer(System.get_env("BROADWAY_CONCURRENCY") || "16")
+      # stages: 1
+    ],
+    processors: [
+      default: [
+        # stages: 1,
+        # concurrency: 1,
+        # min_demand: 1,
+        # max_demand: 1,
+        # batch_size: 1,
+        # batch_timeout: 1_000,
+        # max_demand: 10,
+        # min_demand: 1,
+        # concurrency: 10,
+        # batch_timeout: 1_000,
+        # max_batch_size: 100
+      ]
+    ]
+
+  # ,
+  # batchers: [
+  #   default: [
+  #     batch_size: 1,
+  #     batch_timeout: 1_000,
+  #     min_demand: 1,
+  #     max_demand: 1
+  #   ]
+  # ]
 end

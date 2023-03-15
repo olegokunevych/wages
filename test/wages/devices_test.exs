@@ -21,7 +21,12 @@ defmodule Wages.DevicesTest do
     end
 
     test "create_device/1 with valid data creates a device" do
-      valid_attrs = %{firmware_version: "some firmware_version", model: "some model", owner: "some owner", serial_number: "some serial_number"}
+      valid_attrs = %{
+        firmware_version: "some firmware_version",
+        model: "some model",
+        owner: "some owner",
+        serial_number: "some serial_number"
+      }
 
       assert {:ok, %Device{} = device} = Devices.create_device(valid_attrs)
       assert device.firmware_version == "some firmware_version"
@@ -36,7 +41,13 @@ defmodule Wages.DevicesTest do
 
     test "update_device/2 with valid data updates the device" do
       device = device_fixture()
-      update_attrs = %{firmware_version: "some updated firmware_version", model: "some updated model", owner: "some updated owner", serial_number: "some updated serial_number"}
+
+      update_attrs = %{
+        firmware_version: "some updated firmware_version",
+        model: "some updated model",
+        owner: "some updated owner",
+        serial_number: "some updated serial_number"
+      }
 
       assert {:ok, %Device{} = device} = Devices.update_device(device, update_attrs)
       assert device.firmware_version == "some updated firmware_version"

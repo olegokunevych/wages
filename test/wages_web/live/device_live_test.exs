@@ -4,8 +4,18 @@ defmodule WagesWeb.DeviceLiveTest do
   import Phoenix.LiveViewTest
   import Wages.DevicesFixtures
 
-  @create_attrs %{firmware_version: "some firmware_version", model: "some model", owner: "some owner", serial_number: "some serial_number"}
-  @update_attrs %{firmware_version: "some updated firmware_version", model: "some updated model", owner: "some updated owner", serial_number: "some updated serial_number"}
+  @create_attrs %{
+    firmware_version: "some firmware_version",
+    model: "some model",
+    owner: "some owner",
+    serial_number: "some serial_number"
+  }
+  @update_attrs %{
+    firmware_version: "some updated firmware_version",
+    model: "some updated model",
+    owner: "some updated owner",
+    serial_number: "some updated serial_number"
+  }
   @invalid_attrs %{firmware_version: nil, model: nil, owner: nil, serial_number: nil}
 
   defp create_device(_) do

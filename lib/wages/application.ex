@@ -5,6 +5,8 @@ defmodule Wages.Application do
 
   use Application
 
+  alias WagesWeb.Endpoint
+
   @impl true
   def start(_type, _args) do
     children = [
@@ -17,7 +19,8 @@ defmodule Wages.Application do
       # Start Finch
       {Finch, name: Wages.Finch},
       # Start the Endpoint (http/https)
-      WagesWeb.Endpoint
+      WagesWeb.Endpoint,
+      {Wages.Broadway, Application.get_env(:wages, Wages.Broadway)}
       # Start a worker by calling: Wages.Worker.start_link(arg)
       # {Wages.Worker, arg}
     ]
@@ -32,7 +35,7 @@ defmodule Wages.Application do
   # whenever the application is updated.
   @impl true
   def config_change(changed, _new, removed) do
-    WagesWeb.Endpoint.config_change(changed, removed)
+    Endpoint.config_change(changed, removed)
     :ok
   end
 end
