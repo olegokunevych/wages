@@ -1,0 +1,17 @@
+{
+    "coverage_options": {
+        "treat_no_relevant_lines_as_covered": true,
+        "minimum_coverage": 76.1
+    },
+    "skip_files": [
+        "lib/wages.ex",
+        "lib/wages/application.ex",
+        "lib/wages/release_tasks.ex",
+        "lib/wages_web.ex",
+        "lib/wages_web/endpoint.ex",
+        "lib/wages_web/gettext.ex",
+        "lib/wages_web/router.ex",
+        "lib/wages_web/views/error_helpers.ex",
+        "test/support/*"
+    ]
+}

@@ -9,7 +9,20 @@ defmodule Wages.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+
+      # Testing
+      test_coverage: [tool: ExCoveralls],
+      preferred_cli_env: [
+        check: :test,
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test
+      ],
+
+      # Dialyzer
+      dialyzer: dialyzer()
     ]
   end
 
@@ -50,7 +63,18 @@ defmodule Wages.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
-      {:plug_cowboy, "~> 2.5"}
+      {:plug_cowboy, "~> 2.5"},
+      {:broadway, "~> 1.0"},
+      {:broadway_rabbitmq, "~> 0.7.2"},
+      {:broadway_dashboard, "~> 0.3"},
+
+      # Test and Code Analysis
+      {:excoveralls, "~> 0.13", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
+      {:ex_check, "~> 0.12", only: [:dev, :test], runtime: false},
+      {:sobelow, "~> 0.10", only: [:dev, :test], runtime: false},
+      {:mix_audit, "~> 2.1.0", only: [:dev, :test], runtime: false}
     ]
   end
 
@@ -69,6 +93,20 @@ defmodule Wages.MixProject do
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind default", "esbuild default"],
       "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"]
+    ]
+  end
+
+  defp dialyzer do
+    [
+      plt_add_apps: [:mix, :ex_unit],
+      plt_file: {:no_warn, "priv/plts/dialyzer.plt"},
+      flags: [
+        :unmatched_returns,
+        :error_handling,
+        :no_opaque,
+        :unknown,
+        :no_return
+      ]
     ]
   end
 end

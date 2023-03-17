@@ -1,4 +1,7 @@
 defmodule WagesWeb.PageController do
+  @moduledoc """
+  The PageController module.
+  """
   use WagesWeb, :controller
 
   def home(conn, _params) do

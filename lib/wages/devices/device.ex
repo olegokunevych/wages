@@ -1,4 +1,7 @@
 defmodule Wages.Devices.Device do
+  @moduledoc """
+  The Device schema.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

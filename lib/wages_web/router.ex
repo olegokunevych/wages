@@ -18,7 +18,7 @@ defmodule WagesWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-    
+
     live "/devices", DeviceLive.Index, :index
     live "/devices/new", DeviceLive.Index, :new
     live "/devices/:id/edit", DeviceLive.Index, :edit
@@ -44,7 +44,12 @@ defmodule WagesWeb.Router do
     scope "/dev" do
       pipe_through :browser
 
-      live_dashboard "/dashboard", metrics: WagesWeb.Telemetry
+      live_dashboard "/dashboard",
+        metrics: WagesWeb.Telemetry,
+        additional_pages: [
+          broadway: BroadwayDashboard
+        ]
+
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
   end

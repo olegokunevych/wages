@@ -4,6 +4,8 @@ defmodule Wages.DevicesFixtures do
   entities via the `Wages.Devices` context.
   """
 
+  alias Wages.Devices
+
   @doc """
   Generate a device.
   """
@@ -16,7 +18,7 @@ defmodule Wages.DevicesFixtures do
         owner: "some owner",
         serial_number: "some serial_number"
       })
-      |> Wages.Devices.create_device()
+      |> Devices.create_device()
 
     device
   end

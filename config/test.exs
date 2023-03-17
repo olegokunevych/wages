@@ -6,10 +6,11 @@ import Config
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
 config :wages, Wages.Repo,
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost",
-  database: "wages_test#{System.get_env("MIX_TEST_PARTITION")}",
+  username: System.get_env("DATABASE_USER", "postgres"),
+  password: System.get_env("DATABASE_PASSWORD", "postgres"),
+  database:
+    System.get_env("DATABASE_NAME", "wages_#{Mix.env()}_#{System.get_env("MIX_TEST_PARTITION")}"),
+  hostname: System.get_env("DATABASE_HOST", "localhost"),
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
 
@@ -31,3 +32,12 @@ config :logger, level: :warning
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
+
+config :wages, Wages.Broadway,
+  name: Wages.Broadway,
+  producer: [
+    module: {Broadway.DummyProducer, []}
+  ],
+  processors: [
+    default: []
+  ]
