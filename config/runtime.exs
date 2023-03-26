@@ -31,7 +31,10 @@ if config_env() == :prod do
 
   config :wages, Wages.Repo,
     # ssl: true,
-    url: database_url,
+    username: System.get_env("POSTGRES_USER") || "postgres",
+    password: System.get_env("POSTGRES_PASSWORD") || "postgres",
+    hostname: System.get_env("POSTGRES_HOST") || "postgres.wages-dev.svc.cluster.local",
+    database: System.get_env("POSTGRES_DB") || "wages_prod",
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
     socket_options: maybe_ipv6
 
@@ -123,7 +126,7 @@ if config_env() == :prod do
         connection: [
           username: System.get_env("RABBITMQ_USER") || "guest",
           password: System.get_env("RABBITMQ_PASSWORD") || "guest",
-          host: System.get_env("RABBITMQ_HOST") || "rabbitmq.wages-dev",
+          host: System.get_env("RABBITMQ_HOST") || "rabbitmq-amqp.wages-dev.svc.cluster.local",
           port: String.to_integer(System.get_env("RABBITMQ_PORT") || "30672")
         ]
       },
@@ -145,6 +148,10 @@ if config_env() == :prod do
         # max_batch_size: 100
       ]
     ]
+
+  # ,
+  # TODO Partition for ordering guarantee
+  # partition_by: fn (msg) -> msg.data.client_id end
 
   # ,
   # batchers: [
