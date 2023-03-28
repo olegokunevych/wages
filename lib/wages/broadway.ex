@@ -7,6 +7,7 @@ defmodule Wages.Broadway do
   require Logger
 
   alias Wages.Mqtt
+  alias Wages.Influxdb.{Connection, MqttSeries}
 
   def start_link(opts) do
     Broadway.start_link(__MODULE__, opts)
@@ -28,8 +29,14 @@ defmodule Wages.Broadway do
   end
 
   defp process_message(message) do
-    res = Mqtt.new(message.data)
+    {:ok, res} = Mqtt.new(message.data)
     Logger.debug("Received message: #{inspect(res)}")
+    
+    :ok = Connection.write(%MqttSeries{
+      fields: %MqttSeries.Fields{value: res.value},
+      tags: %MqttSeries.Tags{client_id: res.client_id}
+    })
+    
     :ok
   end
 end

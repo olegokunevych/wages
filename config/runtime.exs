@@ -165,3 +165,12 @@ if config_env() == :prod do
   #   ]
   # ]
 end
+
+# Configure InfluxDB
+config :wages, Wages.Influxdb.Connection,
+  auth: [method: :token, token: System.get_env("INFLUXDB_TOKEN")],
+  database: "wages",
+  org: "wages",
+  host: System.get_env("INFLUXDB_HOST") || "influxdb.wages-dev.svc.cluster.local",
+  port: String.to_integer(System.get_env("INFLUXDB_PORT") || "8086"),
+  scheme: "http"
