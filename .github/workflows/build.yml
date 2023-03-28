@@ -5,7 +5,7 @@ env:
   DOCKER_IMAGE: olegokunevych/wages
   DOCKER_USERNAME: ${{ github.actor }}
   DOCKER_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-  DOCKER_TARGET_PLATFORM: linux/arm64/v8
+  DOCKER_TARGET_PLATFORM: linux/arm/v7,linux/arm64/v8,linux/amd64
 
 on:
   push:
