@@ -21,12 +21,6 @@ if System.get_env("PHX_SERVER") do
 end
 
 if config_env() == :prod do
-  database_url = System.get_env("DATABASE_URL") || "ecto://wages:wages@localhost/wages_prod"
-  # raise """
-  # environment variable DATABASE_URL is missing.
-  # For example: ecto://USER:PASS@HOST/DATABASE
-  # """
-
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
   config :wages, Wages.Repo,
@@ -120,6 +114,11 @@ if config_env() == :prod do
     producer: [
       module: {
         BroadwayRabbitMQ.Producer,
+        on_failure: :reject_and_requeue_once,
+        on_success: :ack,
+        buffer_size: 100,
+        backoff_min: 0,
+        backoff_max: 100,
         queue: System.get_env("RABBITMQ_QUEUE") || "wages-events",
         declare: [durable: true],
         bindings: [{"amq.topic", [routing_key: "wages.*"]}],
@@ -130,22 +129,25 @@ if config_env() == :prod do
           port: String.to_integer(System.get_env("RABBITMQ_PORT") || "30672")
         ]
       },
+      qos: [
+        # See "Back-pressure and `:prefetch_count`" section
+        prefetch_count: 16
+      ],
       concurrency: String.to_integer(System.get_env("BROADWAY_CONCURRENCY") || "16")
       # stages: 1
     ],
     processors: [
       default: [
-        # stages: 1,
-        # concurrency: 1,
-        # min_demand: 1,
-        # max_demand: 1,
-        # batch_size: 1,
-        # batch_timeout: 1_000,
-        # max_demand: 10,
-        # min_demand: 1,
-        # concurrency: 10,
-        # batch_timeout: 1_000,
-        # max_batch_size: 100
+        concurrency: 8,
+        min_demand: 1,
+        max_demand: 2
+      ]
+    ],
+    batchers: [
+      default: [
+        concurrency: 8,
+        batch_size: 10,
+        batch_timeout: 100
       ]
     ]
 

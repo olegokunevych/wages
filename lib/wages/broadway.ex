@@ -6,6 +6,8 @@ defmodule Wages.Broadway do
 
   require Logger
 
+  alias Wages.Mqtt
+
   def start_link(opts) do
     Broadway.start_link(__MODULE__, opts)
   end
@@ -13,12 +15,21 @@ defmodule Wages.Broadway do
   @impl Broadway
   def handle_message(_, message, _context) do
     # Broadway.Message.ack_immediately(message)
-    :ok = process_message(message)
+    # :ok = process_message(message)
     message
   end
 
+  @impl Broadway
+  def handle_batch(_, messages, _, _) do
+    # IO.inspect(messages, label: "messages")
+    messages |> Enum.map(&process_message/1)
+    # messages |> Enum.map(&Broadway.Message.ack_immediately/1)
+    messages
+  end
+
   defp process_message(message) do
-    Logger.debug("Received message: #{inspect(message)}")
+    res = Mqtt.new(message.data)
+    Logger.debug("Received message: #{inspect(res)}")
     :ok
   end
 end

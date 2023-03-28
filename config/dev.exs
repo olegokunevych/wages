@@ -67,7 +67,7 @@ config :wages, WagesWeb.Endpoint,
 config :wages, dev_routes: true
 
 # Do not include metadata nor timestamps in development logs
-config :logger, :console, format: "[$level] $message\n", level: :info
+config :logger, :console, format: "[$level] $message\n", level: :debug
 
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.
@@ -84,18 +84,46 @@ config :wages, Wages.Broadway,
   producer: [
     module: {
       BroadwayRabbitMQ.Producer,
+      on_failure: :reject_and_requeue_once,
+      on_success: :ack,
+      buffer_size: 100,
+      backoff_min: 0,
+      backoff_max: 100,
       queue: "wages-events",
       declare: [durable: true],
       bindings: [{"amq.topic", [routing_key: "wages.*"]}],
       connection: [
         username: "guest",
         password: "guest",
-        host: "localhost",
-        port: 5672
+        host: "kubernetes.local",
+        port: 31642
+      ],
+      qos: [
+        # See "Back-pressure and `:prefetch_count`" section
+        prefetch_count: 16
       ]
     },
-    concurrency: 16
+    # },
+    concurrency: 32
   ],
   processors: [
-    default: []
+    default: [
+      concurrency: 8,
+      min_demand: 1,
+      max_demand: 2
+      # batch_size: 1,
+      # batch_timeout: 1_000,
+      # max_demand: 10,
+      # min_demand: 1,
+      # concurrency: 10,
+      # batch_timeout: 1_000,
+      # max_batch_size: 100
+    ]
+  ],
+  batchers: [
+    default: [
+      concurrency: 8,
+      batch_size: 10,
+      batch_timeout: 100
+    ]
   ]
