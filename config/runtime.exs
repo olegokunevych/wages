@@ -127,12 +127,12 @@ if config_env() == :prod do
           password: System.get_env("RABBITMQ_PASSWORD") || "guest",
           host: System.get_env("RABBITMQ_HOST") || "rabbitmq-amqp.wages-dev.svc.cluster.local",
           port: String.to_integer(System.get_env("RABBITMQ_PORT") || "30672")
+        ],
+        qos: [
+          # See "Back-pressure and `:prefetch_count`" section
+          prefetch_count: 16
         ]
       },
-      qos: [
-        # See "Back-pressure and `:prefetch_count`" section
-        prefetch_count: 16
-      ],
       concurrency: String.to_integer(System.get_env("BROADWAY_CONCURRENCY") || "16")
       # stages: 1
     ],
