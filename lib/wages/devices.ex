@@ -17,6 +17,7 @@ defmodule Wages.Devices do
       [%Device{}, ...]
 
   """
+  @spec list_devices() :: [Device.t()]
   def list_devices do
     Repo.all(Device)
   end
@@ -35,7 +36,21 @@ defmodule Wages.Devices do
       ** (Ecto.NoResultsError)
 
   """
+  @spec get_device!(integer()) :: Device.t() | nil
   def get_device!(id), do: Repo.get!(Device, id)
+
+  @doc """
+  Gets a single device by client_id.
+  """
+  @spec get_device_by_client_id(String.t()) :: {:ok, Device.t()} | {:error, :not_found}
+  def get_device_by_client_id(client_id) do
+    device = Repo.one(from d in Device, where: d.client_id == ^client_id)
+
+    case device do
+      nil -> {:error, :not_found}
+      _ -> {:ok, device}
+    end
+  end
 
   @doc """
   Creates a device.
@@ -49,6 +64,7 @@ defmodule Wages.Devices do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec create_device(map()) :: {:ok, Device.t()} | {:error, Ecto.Changeset.t()}
   def create_device(attrs \\ %{}) do
     %Device{}
     |> Device.changeset(attrs)
@@ -67,6 +83,7 @@ defmodule Wages.Devices do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec update_device(Device.t(), map()) :: {:ok, Device.t()} | {:error, Ecto.Changeset.t()}
   def update_device(%Device{} = device, attrs) do
     device
     |> Device.changeset(attrs)
@@ -85,6 +102,7 @@ defmodule Wages.Devices do
       {:error, %Ecto.Changeset{}}
 
   """
+  @spec delete_device(Device.t()) :: {:ok, Device.t()} | {:error, Ecto.Changeset.t()}
   def delete_device(%Device{} = device) do
     Repo.delete(device)
   end
@@ -98,6 +116,7 @@ defmodule Wages.Devices do
       %Ecto.Changeset{data: %Device{}}
 
   """
+  @spec change_device(Device.t(), map()) :: Ecto.Changeset.t()
   def change_device(%Device{} = device, attrs \\ %{}) do
     Device.changeset(device, attrs)
   end

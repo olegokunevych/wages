@@ -19,6 +19,7 @@ defmodule WagesWeb.DeviceLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
+        <.input field={@form[:client_id]} type="text" label="Client ID" />
         <.input field={@form[:serial_number]} type="text" label="Serial number" />
         <.input field={@form[:owner]} type="text" label="Owner" />
         <.input field={@form[:firmware_version]} type="text" label="Firmware version" />

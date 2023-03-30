@@ -8,7 +8,7 @@ defmodule Wages.DevicesTest do
 
     import Wages.DevicesFixtures
 
-    @invalid_attrs %{firmware_version: nil, model: nil, owner: nil, serial_number: nil}
+    @invalid_attrs %{client_id: nil}
 
     test "list_devices/0 returns all devices" do
       device = device_fixture()
@@ -20,12 +20,22 @@ defmodule Wages.DevicesTest do
       assert Devices.get_device!(device.id) == device
     end
 
+    test "get_device_by_client_id/1 returns the device with given client_id" do
+      device = device_fixture()
+      assert Devices.get_device_by_client_id(device.client_id) == {:ok, device}
+    end
+
+    test "get_device_by_client_id/1 returns nil if no device with given client_id" do
+      assert Devices.get_device_by_client_id("some client_id") == {:error, :not_found}
+    end
+
     test "create_device/1 with valid data creates a device" do
       valid_attrs = %{
         firmware_version: "some firmware_version",
         model: "some model",
         owner: "some owner",
-        serial_number: "some serial_number"
+        serial_number: "some serial_number",
+        client_id: "AAAA1111BBBB2222"
       }
 
       assert {:ok, %Device{} = device} = Devices.create_device(valid_attrs)
