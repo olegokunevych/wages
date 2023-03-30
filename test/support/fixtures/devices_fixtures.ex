@@ -16,7 +16,8 @@ defmodule Wages.DevicesFixtures do
         firmware_version: "some firmware_version",
         model: "some model",
         owner: "some owner",
-        serial_number: "some serial_number"
+        serial_number: "some serial_number",
+        client_id: :crypto.strong_rand_bytes(16) |> Base.encode16()
       })
       |> Devices.create_device()
 

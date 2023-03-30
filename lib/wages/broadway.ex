@@ -6,7 +6,7 @@ defmodule Wages.Broadway do
 
   require Logger
 
-  alias Wages.Mqtt
+  alias Wages.{Devices, Mqtt}
   alias Wages.Influxdb.{Connection, MqttSeries}
 
   def start_link(opts) do
@@ -25,18 +25,24 @@ defmodule Wages.Broadway do
     # IO.inspect(messages, label: "messages")
     messages |> Enum.map(&process_message/1)
     # messages |> Enum.map(&Broadway.Message.ack_immediately/1)
-    messages
+    # messages
   end
 
   defp process_message(message) do
     {:ok, res} = Mqtt.new(message.data)
     Logger.debug("Received message: #{inspect(res)}")
-    
-    :ok = Connection.write(%MqttSeries{
-      fields: %MqttSeries.Fields{value: res.value},
-      tags: %MqttSeries.Tags{client_id: res.client_id}
-    })
-    
+
+    with {:error, :not_found} <- Devices.get_device_by_client_id(res.client_id) do
+      Logger.info("Creating new device with client_id: #{res.client_id}")
+      Devices.create_device(%{client_id: res.client_id})
+    end
+
+    :ok =
+      Connection.write(%MqttSeries{
+        fields: %MqttSeries.Fields{value: res.value},
+        tags: %MqttSeries.Tags{client_id: res.client_id}
+      })
+
     :ok
   end
 end

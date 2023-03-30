@@ -8,15 +8,17 @@ defmodule WagesWeb.DeviceLiveTest do
     firmware_version: "some firmware_version",
     model: "some model",
     owner: "some owner",
-    serial_number: "some serial_number"
+    serial_number: "some serial_number",
+    client_id: "AAAA1111BBBB2222"
   }
   @update_attrs %{
     firmware_version: "some updated firmware_version",
     model: "some updated model",
     owner: "some updated owner",
-    serial_number: "some updated serial_number"
+    serial_number: "some updated serial_number",
+    client_id: "CCCC3333DDDD4444"
   }
-  @invalid_attrs %{firmware_version: nil, model: nil, owner: nil, serial_number: nil}
+  @invalid_attrs %{client_id: nil}
 
   defp create_device(_) do
     device = device_fixture()
