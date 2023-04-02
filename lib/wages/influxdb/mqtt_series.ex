@@ -1,4 +1,8 @@
 defmodule Wages.Influxdb.MqttSeries do
+  @moduledoc """
+  InfluxDB series for MQTT messages.
+  """
+
   use Instream.Series
 
   series do
