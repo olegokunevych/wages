@@ -1,4 +1,8 @@
 defmodule Wages.Mqtt do
+  @moduledoc """
+  The `Wages.Mqtt` module provides a struct for parsing MQTT messages.
+  """
+
   alias Wages.Mqtt.Parser
 
   defstruct [:client_id, :value, :tstamp]
@@ -8,8 +12,8 @@ defmodule Wages.Mqtt do
 
   Examples:
 
-      iex> Wages.Mqtt.new("c_id=5D5DC50FF413751125FC7DA42C008048;val=6;ts=2023-03-27 15:11:59.218609Z")
-      {:ok, %Wages.Mqtt{client_id: "5D5DC50FF413751125FC7DA42C008048", value: 6, tstamp: ~U[2023-03-27 15:11:59.218609Z]}}
+      iex> Wages.Mqtt.new("c_id=5D5DC50FF413751125FC7DA42C008048;val=6.3;ts=2023-03-27 15:11:59.218609Z")
+      {:ok, %Wages.Mqtt{client_id: "5D5DC50FF413751125FC7DA42C008048", value: 6.3, tstamp: ~U[2023-03-27 15:11:59.218609Z]}}
 
       iex> {:error, "expected string" <> _} = Wages.Mqtt.new("invalid_binary_string")
 
