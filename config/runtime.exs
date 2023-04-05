@@ -144,11 +144,12 @@ if config_env() == :prod do
       ]
     ],
     batchers: [
-      default: [
+      coffee_extractor: [
         concurrency: 8,
-        batch_size: 10,
-        batch_timeout: 100
-      ]
+        batch_size: 1000,
+        batch_timeout: 10_000
+      ],
+      default: []
     ]
 
   # ,
