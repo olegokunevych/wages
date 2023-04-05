@@ -6,8 +6,9 @@ defmodule Wages.Broadway do
 
   require Logger
 
-  alias Wages.{Devices, Mqtt}
-  alias Wages.Influxdb.{Connection, MqttSeries}
+  alias Broadway.Message
+  alias Wages.Influxdb.Connection
+  alias Wages.Mqtt.Processor
 
   def start_link(opts) do
     Broadway.start_link(__MODULE__, opts)
@@ -15,34 +16,20 @@ defmodule Wages.Broadway do
 
   @impl Broadway
   def handle_message(_, message, _context) do
-    # Broadway.Message.ack_immediately(message)
-    # :ok = process_message(message)
-    message
+    Message.put_batcher(message, :coffee_extractor)
   end
 
   @impl Broadway
-  def handle_batch(_, messages, _, _) do
-    # IO.inspect(messages, label: "messages")
-    messages |> Enum.map(&process_message/1)
-    # messages |> Enum.map(&Broadway.Message.ack_immediately/1)
-    # messages
-  end
+  def handle_batch(:coffee_extractor, messages, batch_info, _context) do
+    Logger.info("Batch info: #{batch_info}")
 
-  defp process_message(message) do
-    {:ok, res} = Mqtt.new(message.data)
-    Logger.debug("Received message: #{inspect(res)}")
+    messages = Enum.map(messages, &Processor.process_message/1)
 
-    with {:error, :not_found} <- Devices.get_device_by_client_id(res.client_id) do
-      Logger.info("Creating new device with client_id: #{res.client_id}")
-      Devices.create_device(%{client_id: res.client_id})
-    end
+    messages
+    |> Enum.map(& &1.data)
+    |> Connection.write()
 
-    :ok =
-      Connection.write(%MqttSeries{
-        fields: %MqttSeries.Fields{value: res.value},
-        tags: %MqttSeries.Tags{client_id: res.client_id}
-      })
-
-    :ok
+    # messages |> Enum.map(&Message.ack_immediately/1)
+    messages
   end
 end

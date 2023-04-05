@@ -96,7 +96,7 @@ config :wages, Wages.Broadway,
         username: "guest",
         password: "guest",
         host: "kubernetes.local",
-        port: 31642
+        port: 31247
       ],
       qos: [
         # See "Back-pressure and `:prefetch_count`" section
@@ -121,9 +121,25 @@ config :wages, Wages.Broadway,
     ]
   ],
   batchers: [
-    default: [
+    coffee_extractor: [
       concurrency: 8,
-      batch_size: 10,
-      batch_timeout: 100
-    ]
+      batch_size: 1000,
+      batch_timeout: 10_000
+    ],
+    default: []
   ]
+
+# Configure InfluxDB
+config :wages, Wages.Influxdb.Connection,
+  auth: [
+    method: :token,
+    token:
+      "zeslpCkmVqkkM12SuaQxs1PxeO7i60e5GZQAwsuOGPCbS-8uTFrdJHlyE-CYD1VH8MJkZV6SPsxipAA7s5v84w=="
+  ],
+  # bucket: "wages",
+  database: "wages",
+  org: "wages",
+  # host: "localhost",
+  host: "kubernetes.local",
+  port: 8086,
+  scheme: "http"

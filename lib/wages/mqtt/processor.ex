@@ -1,0 +1,40 @@
+defmodule Wages.Mqtt.Processor do
+  @moduledoc """
+  Processor for MQTT messages.
+  """
+  require Logger
+
+  alias Broadway.Message
+  alias Wages.{Devices, Mqtt}
+  alias Wages.Influxdb.MqttSeries
+
+  @spec process_message(Message.t()) :: Message.t()
+  def process_message(message) do
+    with {:ok, res} <- Mqtt.new(message.data),
+         {:ok, _device} <- handle_device(res.client_id) do
+      Logger.debug("Received message: #{inspect(res)}")
+
+      data = %MqttSeries{
+        fields: %MqttSeries.Fields{value: res.value},
+        tags: %MqttSeries.Tags{client_id: res.client_id, session_id: res.session_id},
+        timestamp: res.tstamp
+      }
+
+      Message.put_data(message, data)
+    else
+      {:error, reason} ->
+        Logger.error(
+          "Error processing message: #{inspect(message.data)} Reason: #{inspect(reason)}"
+        )
+
+        Message.failed(message, reason)
+    end
+  end
+
+  defp handle_device(client_id) do
+    with {:error, :not_found} <- Devices.get_device_by_client_id(client_id) do
+      Logger.info("Creating new device with client_id: #{client_id}")
+      Devices.create_device(%{client_id: client_id})
+    end
+  end
+end
