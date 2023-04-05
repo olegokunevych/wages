@@ -140,16 +140,17 @@ if config_env() == :prod do
     ],
     processors: [
       default: [
-        concurrency: 8,
-        min_demand: 1,
-        max_demand: 2
+        concurrency: String.to_integer(System.get_env("BROADWAY_PROCESSORS_CONCURRENCY") || "8"),
+        min_demand: String.to_integer(System.get_env("BROADWAY_PROCESSORS_MIN_DEMAND") || "1"),
+        max_demand: String.to_integer(System.get_env("BROADWAY_PROCESSORS_MAX_DEMAND") || "1000")
       ]
     ],
     batchers: [
       coffee_extractor: [
-        concurrency: 8,
-        batch_size: 1000,
-        batch_timeout: 10_000
+        concurrency: String.to_integer(System.get_env("BROADWAY_BATCHERS_CONCURRENCY") || "8"),
+        batch_size: String.to_integer(System.get_env("BROADWAY_BATCHERS_BATCH_SIZE") || "1000"),
+        batch_timeout:
+          String.to_integer(System.get_env("BROADWAY_BATCHERS_BATCH_TIMEOUT") || "10000")
       ],
       default: []
     ]
