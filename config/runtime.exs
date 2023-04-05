@@ -1,5 +1,7 @@
 import Config
 
+config :logger, level: String.to_atom(System.get_env("LOG_LEVEL") || "info")
+
 # config/runtime.exs is executed for all environments, including
 # during releases. It is executed after compilation and before the
 # system starts, so it is typically used to load production configuration

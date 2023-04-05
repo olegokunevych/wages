@@ -21,7 +21,7 @@ defmodule Wages.Broadway do
 
   @impl Broadway
   def handle_batch(:coffee_extractor, messages, batch_info, _context) do
-    Logger.info("Batch info: #{batch_info}")
+    Logger.info("Batch info: #{inspect(batch_info)}")
 
     messages = Enum.map(messages, &Processor.process_message/1)
 
