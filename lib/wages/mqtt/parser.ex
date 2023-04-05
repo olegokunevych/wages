@@ -12,6 +12,12 @@ defmodule Wages.Mqtt.Parser do
     |> unwrap_and_tag(:client_id)
     |> ignore(separator)
 
+  session_id =
+    ignore(string("s_id="))
+    |> utf8_string([], 36)
+    |> unwrap_and_tag(:session_id)
+    |> ignore(separator)
+
   value =
     ignore(string("val="))
     |> integer(min: 1, max: 10)
@@ -23,24 +29,11 @@ defmodule Wages.Mqtt.Parser do
 
   tstamp =
     ignore(string("ts="))
-    |> integer(4)
-    |> ignore(string("-"))
-    |> integer(2)
-    |> ignore(string("-"))
-    |> integer(2)
-    |> ignore(string(" "))
-    |> integer(2)
-    |> ignore(string(":"))
-    |> integer(2)
-    |> ignore(string(":"))
-    |> integer(2)
-    |> ignore(string("."))
-    |> integer(min: 2, max: 6)
-    |> ignore(optional(string("Z")))
-    |> reduce({__MODULE__, :parse_tstamp, [""]})
+    |> integer(min: 9)
+    |> reduce({__MODULE__, :convert_to_nanoseconds, [""]})
     |> unwrap_and_tag(:tstamp)
 
-  mqtt = client_id |> concat(value) |> concat(tstamp) |> eos()
+  mqtt = client_id |> concat(session_id) |> concat(value) |> concat(tstamp) |> eos()
 
   defparsec(:parse, mqtt)
 
@@ -48,10 +41,7 @@ defmodule Wages.Mqtt.Parser do
     String.to_float("#{integer}" <> "." <> "#{decimal}")
   end
 
-  def parse_tstamp([year, month, day, hour, minute, second, millisecond], _) do
-    with {:ok, date} <- Date.new(year, month, day),
-         {:ok, time} <- Time.new(hour, minute, second, millisecond) do
-      DateTime.new!(date, time, "Etc/UTC")
-    end
+  def convert_to_nanoseconds([tstamp], _) do
+    tstamp |> to_string() |> String.pad_trailing(19, "0") |> String.to_integer()
   end
 end
