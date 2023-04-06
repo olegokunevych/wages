@@ -3,10 +3,16 @@ defmodule Wages.Devices do
   The Devices context.
   """
 
+  use Nebulex.Caching
+
   import Ecto.Query, warn: false
+
+  alias Wages.Cache
   alias Wages.Repo
 
   alias Wages.Devices.Device
+
+  @ttl :timer.hours(1)
 
   @doc """
   Returns the list of devices.
@@ -29,19 +35,36 @@ defmodule Wages.Devices do
 
   ## Examples
 
-      iex> get_device!(123)
-      %Device{}
+      iex> get_device(123)
+      {:ok, %Device{id: 123}}
 
-      iex> get_device!(456)
-      ** (Ecto.NoResultsError)
+      iex> get_device(456)
+      {:error, :not_found}
 
   """
-  @spec get_device!(integer()) :: Device.t() | nil
-  def get_device!(id), do: Repo.get!(Device, id)
+  @decorate cacheable(
+              cache: Cache,
+              key: {Device, id},
+              opts: [ttl: @ttl],
+              match: &match_retrieve/1
+            )
+  @spec get_device(integer()) :: {:ok, Device.t()} | {:error, :not_found}
+  def get_device(id) do
+    case Repo.get(Device, id) do
+      nil -> {:error, :not_found}
+      device -> {:ok, device}
+    end
+  end
 
   @doc """
   Gets a single device by client_id.
   """
+  @decorate cacheable(
+              cache: Cache,
+              key: {Device, client_id},
+              opts: [ttl: @ttl],
+              match: &match_retrieve/1
+            )
   @spec get_device_by_client_id(String.t()) :: {:ok, Device.t()} | {:error, :not_found}
   def get_device_by_client_id(client_id) do
     device = Repo.one(from d in Device, where: d.client_id == ^client_id)
@@ -83,6 +106,12 @@ defmodule Wages.Devices do
       {:error, %Ecto.Changeset{}}
 
   """
+  @decorate cache_put(
+              cache: Cache,
+              key: {Device, Integer.to_string(device.id)},
+              match: &match_update/1,
+              opts: [ttl: @ttl]
+            )
   @spec update_device(Device.t(), map()) :: {:ok, Device.t()} | {:error, Ecto.Changeset.t()}
   def update_device(%Device{} = device, attrs) do
     device
@@ -102,6 +131,7 @@ defmodule Wages.Devices do
       {:error, %Ecto.Changeset{}}
 
   """
+  @decorate cache_evict(cache: Cache, key: {Device, device.id})
   @spec delete_device(Device.t()) :: {:ok, Device.t()} | {:error, Ecto.Changeset.t()}
   def delete_device(%Device{} = device) do
     Repo.delete(device)
@@ -120,4 +150,10 @@ defmodule Wages.Devices do
   def change_device(%Device{} = device, attrs \\ %{}) do
     Device.changeset(device, attrs)
   end
+
+  defp match_retrieve({:ok, _value}), do: true
+  defp match_retrieve({:error, _}), do: false
+
+  defp match_update({:ok, updated}), do: {true, {:ok, updated}}
+  defp match_update({:error, _}), do: false
 end
