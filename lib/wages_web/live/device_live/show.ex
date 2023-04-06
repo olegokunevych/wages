@@ -10,10 +10,21 @@ defmodule WagesWeb.DeviceLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    {:noreply,
-     socket
-     |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:device, Devices.get_device!(id))}
+    case Devices.get_device(id) do
+      {:ok, device} ->
+        {:noreply,
+         socket
+         |> assign(:page_title, page_title(socket.assigns.live_action))
+         |> assign(:device, device)}
+
+      _error ->
+        {:noreply, socket}
+    end
+  end
+
+  @impl true
+  def handle_info({WagesWeb.DeviceLive.FormComponent, {:saved, device}}, socket) do
+    {:noreply, socket |> assign(:device, device)}
   end
 
   defp page_title(:show), do: "Show Device"

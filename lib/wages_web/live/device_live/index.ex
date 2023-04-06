@@ -15,9 +15,11 @@ defmodule WagesWeb.DeviceLive.Index do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
+    {:ok, device} = Devices.get_device(id)
+
     socket
     |> assign(:page_title, "Edit Device")
-    |> assign(:device, Devices.get_device!(id))
+    |> assign(:device, device)
   end
 
   defp apply_action(socket, :new, _params) do
@@ -39,9 +41,11 @@ defmodule WagesWeb.DeviceLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    device = Devices.get_device!(id)
-    {:ok, _} = Devices.delete_device(device)
-
-    {:noreply, stream_delete(socket, :devices, device)}
+    with {:ok, device} <- Devices.get_device(id),
+         {:ok, _} <- Devices.delete_device(device) do
+      {:noreply, stream_delete(socket, :devices, device)}
+    else
+      _ -> {:noreply, socket}
+    end
   end
 end

@@ -14,6 +14,7 @@ defmodule Wages.Application do
       WagesWeb.Telemetry,
       # Start the Ecto repository
       Wages.Repo,
+      Wages.Cache,
       Wages.Influxdb.Connection,
       # Start the PubSub system
       {Phoenix.PubSub, name: Wages.PubSub},

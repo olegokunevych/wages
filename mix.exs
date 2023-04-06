@@ -69,6 +69,8 @@ defmodule Wages.MixProject do
       {:broadway_dashboard, "~> 0.3"},
       {:nimble_parsec, "~> 1.2"},
       {:instream, "~> 2.2.0"},
+      {:nebulex, "~> 2.4"},
+      {:decorator, "~> 1.4"},
 
       # Test and Code Analysis
       {:excoveralls, "~> 0.13", only: [:dev, :test], runtime: false},
