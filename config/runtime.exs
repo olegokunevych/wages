@@ -118,9 +118,9 @@ if config_env() == :prod do
         BroadwayRabbitMQ.Producer,
         on_failure: :reject_and_requeue_once,
         on_success: :ack,
-        buffer_size: 100,
-        backoff_min: 0,
-        backoff_max: 100,
+        buffer_size: String.to_integer(System.get_env("BROADWAY_PRODUCER_BUFFER_SIZE") || "100"),
+        backoff_min: String.to_integer(System.get_env("BROADWAY_PRODUCER_BACKOFF_MIN") || "0"),
+        backoff_max: String.to_integer(System.get_env("BROADWAY_PRODUCER_BACKOFF_MAX") || "100"),
         queue: System.get_env("RABBITMQ_QUEUE") || "wages-events",
         declare: [durable: true],
         bindings: [{"amq.topic", [routing_key: "wages.*"]}],
@@ -132,11 +132,10 @@ if config_env() == :prod do
         ],
         qos: [
           # See "Back-pressure and `:prefetch_count`" section
-          prefetch_count: 16
+          prefetch_count: String.to_integer(System.get_env("BROADWAY_QOS_PREFETCH_COUNT") || "16")
         ]
       },
       concurrency: String.to_integer(System.get_env("BROADWAY_CONCURRENCY") || "16")
-      # stages: 1
     ],
     processors: [
       default: [
@@ -158,16 +157,6 @@ if config_env() == :prod do
   # ,
   # TODO Partition for ordering guarantee
   # partition_by: fn (msg) -> msg.data.client_id end
-
-  # ,
-  # batchers: [
-  #   default: [
-  #     batch_size: 1,
-  #     batch_timeout: 1_000,
-  #     min_demand: 1,
-  #     max_demand: 1
-  #   ]
-  # ]
 end
 
 # Configure InfluxDB
