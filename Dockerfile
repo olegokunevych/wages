@@ -17,8 +17,8 @@ RUN mix local.hex --force && \
 COPY . .
 
 # Compile assets
-RUN npm install --prefix ./assets --legacy-peer-deps
-RUN npm rebuild node-sass ./assets
+# RUN npm install --prefix ./assets --legacy-peer-deps
+# RUN npm rebuild node-sass ./assets
 
 # Generate release
 WORKDIR /
