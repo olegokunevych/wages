@@ -27,7 +27,7 @@ config :wages,
 
 # Configures the endpoint
 config :wages, WagesWeb.Endpoint,
-  url: [host: "localhost"],
+  url: [host: "localhost", path: "/wages"],
   render_errors: [
     formats: [html: WagesWeb.ErrorHTML, json: WagesWeb.ErrorJSON],
     layout: false
