@@ -11,7 +11,7 @@ defmodule WagesWeb.Endpoint do
     same_site: "Lax"
   ]
 
-  socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
+  socket "#{Application.compile_env(:wages, [__MODULE__, :url, :path])}/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -47,5 +47,5 @@ defmodule WagesWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
-  plug WagesWeb.Router
+  plug WagesWeb.Router 
 end
