@@ -11,7 +11,7 @@ defmodule WagesWeb.Endpoint do
     same_site: "Lax"
   ]
 
-  socket "#{Application.compile_env(:wages, [__MODULE__, :url, :path])}/live",
+  socket "/live",
          Phoenix.LiveView.Socket,
          websocket: [connect_info: [session: @session_options]]
 
