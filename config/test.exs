@@ -17,6 +17,7 @@ config :wages, Wages.Repo,
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :wages, WagesWeb.Endpoint,
+  url: [host: "localhost", path: "/"],
   http: [ip: {127, 0, 0, 1}, port: 4002],
   secret_key_base: "AI0HIBobH7H7vtXPJu2IJsRekv3odHBuHLz5TIk5d3N/eFrlhRF7B+eO9TEIMLLl",
   server: false

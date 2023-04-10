@@ -25,10 +25,10 @@ WORKDIR /
 RUN mix deps.get --only ${MIX_ENV} && \
     mix release --overwrite --path=artifact
 
-RUN npm run deploy --prefix ./assets
-RUN mix phx.digest
-# RUN mix assets.setup
-# RUN mix assets.build
+# RUN npm run deploy --prefix ./assets
+# RUN mix phx.digest
+RUN mix assets.setup
+RUN mix assets.build
 
 ########################
 # Deployable container #
