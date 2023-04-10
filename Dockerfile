@@ -17,18 +17,18 @@ RUN mix local.hex --force && \
 COPY . .
 
 # Compile assets
-# RUN npm install --prefix ./assets --legacy-peer-deps
-# RUN npm rebuild node-sass ./assets
+RUN npm install --prefix ./assets --legacy-peer-deps
+RUN npm rebuild node-sass ./assets
 
 # Generate release
 WORKDIR /
 RUN mix deps.get --only ${MIX_ENV} && \
     mix release --overwrite --path=artifact
 
-# RUN npm run deploy --prefix ./assets
-RUN mix assets.setup
-RUN mix assets.build
-# RUN mix phx.digest
+RUN npm run deploy --prefix ./assets
+RUN mix phx.digest
+# RUN mix assets.setup
+# RUN mix assets.build
 
 ########################
 # Deployable container #
@@ -38,7 +38,7 @@ FROM alpine:3.17.2
 ARG NET_DEVICE=eth0
 # TODO Replace with your application name
 ARG RELEASE_NAME=wages
-ARG RELEASE_VERSION=0.0.1
+ARG RELEASE_VERSION=0.2.0
 ARG SERVICE_PORT=4000
 
 RUN apk --no-cache add ca-certificates ncurses-libs libcrypto1.1 libgcc libstdc++ libssl1.1 openssl-dev ncurses-libs ncurses-terminfo-base ncurses-terminfo
