@@ -48,9 +48,10 @@ if config_env() == :prod do
 
   host = System.get_env("PHX_SERVER_HOST") || "localhost"
   port = String.to_integer(System.get_env("SERVICE_PORT") || "4000")
+  path = System.get_env("SERVICE_PATH") || "/wages"
 
   config :wages, WagesWeb.Endpoint,
-    url: [host: host, port: port],
+    url: [host: host, port: port, path: path],
     http: [
       # Enable IPv6 and bind on all interfaces.
       # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
