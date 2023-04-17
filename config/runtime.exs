@@ -61,7 +61,8 @@ if config_env() == :prod do
       port: port
     ],
     secret_key_base: secret_key_base,
-    server: true
+    server: true,
+    check_origin: System.get_env("CHECK_ORIGIN") || false
 
   # ## SSL Support
   #
