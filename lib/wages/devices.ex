@@ -20,12 +20,12 @@ defmodule Wages.Devices do
   ## Examples
 
       iex> list_devices()
-      [%Device{}, ...]
+      %Scrivener.Page{entries: [%Device{}, ...]}
 
   """
-  @spec list_devices() :: [Device.t()]
-  def list_devices do
-    Repo.all(Device)
+  @spec list_devices(map()) :: Scrivener.Page.t()
+  def list_devices(params \\ %{}) do
+    Repo.paginate(Device, params)
   end
 
   @doc """

@@ -5,8 +5,15 @@ defmodule WagesWeb.DeviceLive.Index do
   alias Wages.Devices.Device
 
   @impl true
-  def mount(_params, _session, socket) do
-    {:ok, stream(socket, :devices, Devices.list_devices())}
+  def mount(params, _session, socket) do
+    page = Devices.list_devices(params)
+
+    socket =
+      socket
+      |> assign(:page, page)
+      |> stream(:devices, [])
+
+    {:ok, socket}
   end
 
   @impl true
@@ -28,10 +35,14 @@ defmodule WagesWeb.DeviceLive.Index do
     |> assign(:device, %Device{})
   end
 
-  defp apply_action(socket, :index, _params) do
-    socket
+  defp apply_action(socket, :index, params) do
+    page = Devices.list_devices(params)
+
+    page.entries
+    |> Enum.with_index()
+    |> handle_pagination(socket)
     |> assign(:page_title, "Listing Devices")
-    |> assign(:device, nil)
+    |> assign(:page, page)
   end
 
   @impl true
@@ -47,5 +58,15 @@ defmodule WagesWeb.DeviceLive.Index do
     else
       _ -> {:noreply, socket}
     end
+  end
+
+  defp handle_pagination(entries, socket) do
+    Enum.reduce(entries, socket, fn {el, ind}, socket ->
+      case Enum.at(socket.assigns.page.entries, ind) do
+        nil -> socket
+        old_el -> socket |> stream_delete(:devices, old_el)
+      end
+      |> stream_insert(:devices, el)
+    end)
   end
 end
