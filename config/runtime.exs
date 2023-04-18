@@ -53,7 +53,7 @@ if config_env() == :prod do
   check_origin =
     case System.get_env("CHECK_ORIGIN") do
       nil -> :conn
-      _ -> [_]
+      origin -> [origin]
     end
 
   config :wages, WagesWeb.Endpoint,
