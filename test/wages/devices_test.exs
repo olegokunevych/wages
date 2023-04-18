@@ -4,6 +4,7 @@ defmodule Wages.DevicesTest do
   alias Wages.Devices
 
   describe "devices" do
+    alias Scrivener.Page
     alias Wages.Devices.Device
 
     import Wages.DevicesFixtures
@@ -12,7 +13,7 @@ defmodule Wages.DevicesTest do
 
     test "list_devices/0 returns all devices" do
       device = device_fixture()
-      assert Devices.list_devices() == [device]
+      assert %Page{entries: [^device]} = Devices.list_devices()
     end
 
     test "get_device/1 returns the device with given id" do

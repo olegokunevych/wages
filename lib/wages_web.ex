@@ -89,6 +89,8 @@ defmodule WagesWeb do
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
+      alias WagesWeb.Router.Helpers, as: Routes
+      alias WagesWeb.ViewHelpers
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())

@@ -4,7 +4,7 @@ defmodule Wages.MixProject do
   def project do
     [
       app: :wages,
-      version: "0.2.0",
+      version: "0.3.0",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -47,6 +47,7 @@ defmodule Wages.MixProject do
     [
       {:phoenix, "~> 1.7.0"},
       {:phoenix_ecto, "~> 4.4"},
+      {:scrivener_ecto, "~> 2.7"},
       {:ecto_sql, "~> 3.6"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 3.3"},
