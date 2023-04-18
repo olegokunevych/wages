@@ -50,6 +50,12 @@ if config_env() == :prod do
   port = String.to_integer(System.get_env("SERVICE_PORT") || "4000")
   path = System.get_env("SERVICE_PATH") || "/wages"
 
+  check_origin =
+    case System.get_env("CHECK_ORIGIN") do
+      nil -> :conn
+      _ -> [_]
+    end
+
   config :wages, WagesWeb.Endpoint,
     url: [host: host, port: port, path: path],
     http: [
@@ -62,7 +68,7 @@ if config_env() == :prod do
     ],
     secret_key_base: secret_key_base,
     server: true,
-    check_origin: System.get_env("CHECK_ORIGIN") || false
+    check_origin: check_origin
 
   # ## SSL Support
   #
