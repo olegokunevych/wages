@@ -3,5 +3,5 @@ defmodule Wages.Repo do
     otp_app: :wages,
     adapter: Ecto.Adapters.Postgres
 
-  use Scrivener, page_size: 20
+  use Scrivener, page_size: 10
 end

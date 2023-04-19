@@ -175,4 +175,5 @@ config :wages, Wages.Influxdb.Connection,
   org: "wages",
   host: System.get_env("INFLUXDB_HOST") || "influxdb.wages-dev.svc.cluster.local",
   port: String.to_integer(System.get_env("INFLUXDB_PORT") || "8086"),
-  scheme: "http"
+  scheme: "http",
+  version: :v2

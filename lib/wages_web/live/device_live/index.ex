@@ -38,11 +38,26 @@ defmodule WagesWeb.DeviceLive.Index do
   defp apply_action(socket, :index, params) do
     page = Devices.list_devices(params)
 
+    extractions_summary =
+      page.entries
+      |> Enum.map(& &1.client_id)
+      |> Devices.get_extraction_series_by_client_ids()
+      |> Enum.reduce(%{}, fn {client_id, series}, acc ->
+        total_extractions =
+          series
+          |> Enum.group_by(& &1["session_id"])
+          |> Map.keys()
+          |> Enum.count()
+
+        Map.put(acc, client_id, total_extractions)
+      end)
+
     page.entries
     |> Enum.with_index()
     |> handle_pagination(socket)
     |> assign(:page_title, "Listing Devices")
     |> assign(:page, page)
+    |> assign(:extractions_summary, extractions_summary)
   end
 
   @impl true

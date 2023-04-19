@@ -10,12 +10,13 @@ defmodule WagesWeb.DeviceLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    case Devices.get_device(id) do
-      {:ok, device} ->
+    case Devices.get_device_with_mqtt_info(id) do
+      {:ok, device, extractions} ->
         {:noreply,
          socket
          |> assign(:page_title, page_title(socket.assigns.live_action))
-         |> assign(:device, device)}
+         |> assign(:device, device)
+         |> assign(:extractions, extractions)}
 
       _error ->
         {:noreply, socket}
