@@ -140,7 +140,8 @@ config :wages, Wages.Influxdb.Connection,
   # bucket: "wages",
   database: "wages",
   org: "wages",
-  # host: "localhost",
-  host: "kubernetes.local",
+  host: "localhost",
+  # host: "kubernetes.local",
   port: 8086,
-  scheme: "http"
+  scheme: "http",
+  version: :v2

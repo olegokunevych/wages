@@ -11,6 +11,7 @@ defmodule Wages.Devices do
   alias Wages.Repo
 
   alias Wages.Devices.Device
+  alias Wages.Influxdb.Connection, as: InfluxdbConn
 
   @ttl :timer.hours(1)
 
@@ -26,6 +27,27 @@ defmodule Wages.Devices do
   @spec list_devices(map()) :: Scrivener.Page.t()
   def list_devices(params \\ %{}) do
     Repo.paginate(Device, params)
+  end
+
+  @doc """
+  Returns the list of devices with MQTT info.
+
+  ## Examples
+
+      iex> list_devices_with_mqtt_info()
+      %Scrivener.Page{entries: [%Device{}, ...]}
+
+  """
+  @spec list_devices_with_mqtt_info(map()) :: Scrivener.Page.t()
+  def list_devices_with_mqtt_info(params \\ %{}) do
+    %Scrivener.Page{entries: _devices} = list_devices(params)
+
+    # InfluxdbConn.query(
+    #   """
+    #     from(bucket: "#{InfluxdbConn.bucket()}")
+
+    #   """
+    # )
   end
 
   @doc """
@@ -72,6 +94,27 @@ defmodule Wages.Devices do
     case device do
       nil -> {:error, :not_found}
       _ -> {:ok, device}
+    end
+  end
+
+  @spec get_device_with_mqtt_info(integer()) ::
+          {:ok, Device.t(), map() | atom()} | {:error, :not_found}
+  def get_device_with_mqtt_info(id) do
+    with {:ok, device} <- get_device(id),
+         {_, mqtt_info} <- get_mqtt_info(device) do
+      {:ok, device, mqtt_info}
+    else
+      error -> error
+    end
+  end
+
+  @spec get_extraction_series_by_client_ids([integer()]) :: map()
+  def get_extraction_series_by_client_ids(client_ids) do
+    with {:ok, measurements} <- do_summary_query(client_ids) do
+      Enum.map(measurements, fn measurement ->
+        Map.take(measurement, ["_time", "_value", "session_id", "client_id"])
+      end)
+      |> Enum.group_by(&Map.get(&1, "client_id"))
     end
   end
 
@@ -156,4 +199,48 @@ defmodule Wages.Devices do
 
   defp match_update({:ok, updated}), do: {true, {:ok, updated}}
   defp match_update({:error, _}), do: false
+
+  defp get_mqtt_info(device) do
+    case do_query(device.client_id) do
+      {:ok, measurements} -> {:ok, get_grouped_by_session(measurements)}
+      error -> error
+    end
+  end
+
+  defp do_summary_query(client_ids) do
+    """
+      from(bucket: "#{InfluxdbConn.config(:database)}")
+      |> range(start: -30d)
+      |> filter(fn: (r) => r["_measurement"] == "wages_meas")
+      |> filter(fn: (r) => r["client_id"] == "#{Enum.join(client_ids, "\" or r[\"client_id\"] == \"")}")
+      |> aggregateWindow(every: 1s, fn: mean, createEmpty: false)
+    """
+    |> InfluxdbConn.query(query_language: :flux)
+    |> handle_influxdb_response()
+  end
+
+  defp do_query(client_id) do
+    """
+      from(bucket: "#{InfluxdbConn.config(:database)}")
+      |> range(start: -30d)
+      |> filter(fn: (r) => r["_measurement"] == "wages_meas")
+      |> filter(fn: (r) => r["client_id"] == "#{client_id}")
+      |> aggregateWindow(every: 1s, fn: mean, createEmpty: false)
+    """
+    |> InfluxdbConn.query(query_language: :flux)
+    |> handle_influxdb_response()
+  end
+
+  defp handle_influxdb_response({:error, reason}), do: {:error, reason}
+
+  defp handle_influxdb_response(results) when is_list(results) do
+    {:ok, results}
+  end
+
+  defp get_grouped_by_session(measurements) do
+    Enum.map(measurements, fn measurement ->
+      Map.take(measurement, ["_time", "_value", "session_id"])
+    end)
+    |> Enum.group_by(&Map.get(&1, "session_id"))
+  end
 end

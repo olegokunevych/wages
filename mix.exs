@@ -79,7 +79,8 @@ defmodule Wages.MixProject do
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false},
       {:ex_check, "~> 0.12", only: [:dev, :test], runtime: false},
       {:sobelow, "~> 0.10", only: [:dev, :test], runtime: false},
-      {:mix_audit, "~> 2.1.0", only: [:dev, :test], runtime: false}
+      {:mix_audit, "~> 2.1.0", only: [:dev, :test], runtime: false},
+      {:mock, "0.3.7", only: [:dev, :test], runtime: false}
     ]
   end
 
