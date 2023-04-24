@@ -12,7 +12,6 @@ defmodule Wages.Devices do
 
   alias Wages.Devices.Device
   alias Wages.Influxdb.Connection, as: InfluxdbConn
-  # alias Wages.Influxdb.MqttSeries
 
   @ttl :timer.hours(1)
 
@@ -98,13 +97,14 @@ defmodule Wages.Devices do
     end
   end
 
-  @spec get_device_with_mqtt_info(integer()) :: {:ok, Device.t(), map()} | {:error, :not_found}
+  @spec get_device_with_mqtt_info(integer()) ::
+          {:ok, Device.t(), map() | atom()} | {:error, :not_found}
   def get_device_with_mqtt_info(id) do
     with {:ok, device} <- get_device(id),
-         {:ok, mqtt_info} <- get_mqtt_info(device) do
+         {_, mqtt_info} <- get_mqtt_info(device) do
       {:ok, device, mqtt_info}
     else
-      {:error, :not_found} -> {:error, :not_found}
+      error -> error
     end
   end
 

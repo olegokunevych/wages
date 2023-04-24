@@ -1,45 +1,54 @@
-<.header>
-  Device <%= @device.id %>
-  <:subtitle>This is a device record from your database.</:subtitle>
-  <:actions>
-    <.link patch={~p"/devices/#{@device}/show/edit"} phx-click={JS.push_focus()}>
-      <.button>Edit device</.button>
-    </.link>
-  </:actions>
-</.header>
+<%= if @device do %>
+  <.header>
+    Device <%= @device.id %>
+    <:subtitle>This is a device record from your database.</:subtitle>
+    <:actions>
+      <.link patch={~p"/devices/#{@device}/show/edit"} phx-click={JS.push_focus()}>
+        <.button>Edit device</.button>
+      </.link>
+    </:actions>
+  </.header>
 
-<.list>
-  <:item title="Client ID"><%= @device.client_id %></:item>
-  <:item title="Serial number"><%= @device.serial_number %></:item>
-  <:item title="Owner"><%= @device.owner %></:item>
-  <:item title="Firmware version"><%= @device.firmware_version %></:item>
-  <:item title="Model"><%= @device.model %></:item>
-  <:item title="Extractions total"><%= Enum.count(@extractions) %></:item>
-  <:item title="Extractions">
-    <ul>
-      <%= for {session_id, session} <- @extractions do %>
-        <li>
-          <%= session_id %> (<%= Enum.count(session) %> measurement items)
-        </li>
-      <% end %>
-    </ul>
-  </:item>
-</.list>
+  <.list>
+    <:item title="Client ID"><%= @device.client_id %></:item>
+    <:item title="Serial number"><%= @device.serial_number %></:item>
+    <:item title="Owner"><%= @device.owner %></:item>
+    <:item title="Firmware version"><%= @device.firmware_version %></:item>
+    <:item title="Model"><%= @device.model %></:item>
+    <:item title="Extractions total"><%= Enum.count(@extractions) %></:item>
+    <:item title="Extractions">
+      <ul>
+        <%= for {session_id, session} <- @extractions do %>
+          <li>
+            <%= session_id %> (<%= Enum.count(session) %> measurement items)
+          </li>
+        <% end %>
+      </ul>
+    </:item>
+  </.list>
 
-<.back navigate={~p"/devices"}>Back to devices</.back>
+  <.back navigate={~p"/devices"}>Back to devices</.back>
 
-<.modal
-  :if={@live_action == :edit}
-  id="device-modal"
-  show
-  on_cancel={JS.patch(~p"/devices/#{@device}")}
->
-  <.live_component
-    module={WagesWeb.DeviceLive.FormComponent}
-    id={@device.id}
-    title={@page_title}
-    action={@live_action}
-    device={@device}
-    patch={~p"/devices/#{@device}"}
-  />
-</.modal>
+  <.modal
+    :if={@live_action == :edit}
+    id="device-modal"
+    show
+    on_cancel={JS.patch(~p"/devices/#{@device}")}
+  >
+    <.live_component
+      module={WagesWeb.DeviceLive.FormComponent}
+      id={@device.id}
+      title={@page_title}
+      action={@live_action}
+      device={@device}
+      patch={~p"/devices/#{@device}"}
+    />
+  </.modal>
+<% else %>
+  <.header>
+    Device not found
+    <:subtitle>This device does not exist in your database.</:subtitle>
+  </.header>
+
+  <.back navigate={~p"/devices"}>Back to devices</.back>
+<% end %>
