@@ -81,6 +81,7 @@ config :phoenix, :plug_init_mode, :runtime
 config :swoosh, :api_client, false
 
 config :wages, Wages.Broadway,
+  disabled: System.get_env("BROADWAY_DISABLED") == "true",
   name: Wages.Broadway,
   producer: [
     module: {
