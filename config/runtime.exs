@@ -121,6 +121,7 @@ if config_env() == :prod do
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 
   config :wages, Wages.Broadway,
+    disabled: System.get_env("BROADWAY_DISABLED") == "true",
     name: Wages.Broadway,
     producer: [
       module: {
@@ -176,4 +177,4 @@ config :wages, Wages.Influxdb.Connection,
   host: System.get_env("INFLUXDB_HOST") || "influxdb.wages-dev.svc.cluster.local",
   port: String.to_integer(System.get_env("INFLUXDB_PORT") || "8086"),
   scheme: "http",
-  version: :v2
+  version: String.to_atom(System.get_env("INFLUXDB_VERSION") || "v2")
