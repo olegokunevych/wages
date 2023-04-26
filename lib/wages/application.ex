@@ -9,24 +9,23 @@ defmodule Wages.Application do
 
   @impl true
   def start(_type, _args) do
-    children =
-      [
-        # Start the Telemetry supervisor
-        WagesWeb.Telemetry,
-        # Start the Ecto repository
-        Wages.Repo,
-        Wages.Cache,
-        Wages.Influxdb.Connection,
-        # Start the PubSub system
-        {Phoenix.PubSub, name: Wages.PubSub},
-        # Start Finch
-        {Finch, name: Wages.Finch},
-        # Start the Endpoint (http/https)
-        WagesWeb.Endpoint
-        # Start a worker by calling: Wages.Worker.start_link(arg)
-        # {Wages.Worker, arg}
-      ]
-      |> maybe_append_broadway(Application.get_env(:wages, Wages.Broadway))
+    children = [
+      # Start the Telemetry supervisor
+      WagesWeb.Telemetry,
+      # Start the Ecto repository
+      Wages.Repo,
+      Wages.Cache,
+      Wages.Influxdb.Connection,
+      # Start the PubSub system
+      {Phoenix.PubSub, name: Wages.PubSub},
+      # Start Finch
+      {Finch, name: Wages.Finch},
+      # Start the Endpoint (http/https)
+      WagesWeb.Endpoint,
+      {Wages.Broadway, Application.get_env(:wages, Wages.Broadway)}
+      # Start a worker by calling: Wages.Worker.start_link(arg)
+      # {Wages.Worker, arg}
+    ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
@@ -40,13 +39,5 @@ defmodule Wages.Application do
   def config_change(changed, _new, removed) do
     Endpoint.config_change(changed, removed)
     :ok
-  end
-
-  defp maybe_append_broadway(children, broadway) do
-    if Keyword.get(broadway, :disabled) do
-      children
-    else
-      children ++ [{Wages.Broadway, broadway}]
-    end
   end
 end
