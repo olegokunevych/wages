@@ -74,47 +74,47 @@ export default class {
 }
 
 //loading chartjs
-const Chart = require("chart.js/auto");
+// const Chart = require("chart.js/auto");
 
-//A Canvas dom element with ID "lineChart" is where our chart will display
-var lineChart = document.getElementById("lineChart");
+// //A Canvas dom element with ID "lineChart" is where our chart will display
+// var lineChart = document.getElementById("lineChart");
 
-var ctx = lineChart && lineChart.getContext("2d");
+// var ctx = lineChart && lineChart.getContext("2d");
 
-var chart_data = [1, 2, 3, 4];
-var chart_labels = [1, 2, 3, 4];
+// var chart_data = [1, 2, 3, 4];
+// var chart_labels = [1, 2, 3, 4];
 
-if (ctx) {
-    var myChart = new Chart(ctx, {
-        type: "line",
-        data: {
-            //we make sure of the following variable to available in the template that uses this JS file and it act as X-Axis
-            labels: chart_labels,
-            datasets: [
-                {
-                    label: "Coffee extraction",
+// if (ctx) {
+//     var myChart = new Chart(ctx, {
+//         type: "line",
+//         data: {
+//             //we make sure of the following variable to available in the template that uses this JS file and it act as X-Axis
+//             labels: chart_labels,
+//             datasets: [
+//                 {
+//                     label: "Coffee extraction",
 
-                    // Adjust the colors and Background here if you need
-                    backgroundColor: "rgba(155, 89, 182,0.2)",
-                    borderColor: "rgba(142, 68, 173,1.0)",
-                    pointBackgroundColor: "rgba(142, 68, 173,1.0)",
+//                     // Adjust the colors and Background here if you need
+//                     backgroundColor: "rgba(155, 89, 182,0.2)",
+//                     borderColor: "rgba(142, 68, 173,1.0)",
+//                     pointBackgroundColor: "rgba(142, 68, 173,1.0)",
 
-                    //we make sure of the following variable to available in the template that uses this JS
-                    data: chart_data,
-                },
-            ],
-        },
-        options: {
-            responsive: true,
-            aspectRatio: 7,
-            scales: {
-                y: {
-                    max: 10
-                },
-                x: {
-                    max: 600
-                }
-            },
-        },
-    });
-}
+//                     //we make sure of the following variable to available in the template that uses this JS
+//                     data: chart_data,
+//                 },
+//             ],
+//         },
+//         options: {
+//             responsive: true,
+//             aspectRatio: 7,
+//             scales: {
+//                 y: {
+//                     max: 10
+//                 },
+//                 x: {
+//                     max: 600
+//                 }
+//             },
+//         },
+//     });
+// }
