@@ -77,6 +77,8 @@ defmodule WagesWeb.DeviceLive.Index do
     end)
   end
 
+  defp handle_extractions_summary({:error, _}), do: %{}
+
   defp handle_extractions_summary(devices) do
     Enum.reduce(devices, %{}, fn {client_id, series}, acc ->
       total_extractions =
