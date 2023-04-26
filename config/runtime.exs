@@ -121,7 +121,6 @@ if config_env() == :prod do
   # See https://hexdocs.pm/swoosh/Swoosh.html#module-installation for details.
 
   config :wages, Wages.Broadway,
-    disabled: System.get_env("BROADWAY_DISABLED") == "true",
     name: Wages.Broadway,
     producer: [
       module: {
