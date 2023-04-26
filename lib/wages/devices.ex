@@ -11,7 +11,7 @@ defmodule Wages.Devices do
   alias Wages.Repo
 
   alias Wages.Devices.Device
-  alias Wages.Influxdb.Connection, as: InfluxdbConn
+  alias Wages.Influxdb.ConnectionRead, as: InfluxdbConn
 
   @ttl :timer.hours(1)
 

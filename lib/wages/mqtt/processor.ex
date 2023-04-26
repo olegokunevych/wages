@@ -7,11 +7,13 @@ defmodule Wages.Mqtt.Processor do
   alias Broadway.Message
   alias Wages.{Devices, Mqtt}
   alias Wages.Influxdb.MqttSeries
+  alias WagesWeb.Endpoint
 
   @spec process_message(Message.t()) :: Message.t()
   def process_message(message) do
     with {:ok, res} <- Mqtt.new(message.data),
-         {:ok, _device} <- handle_device(res.client_id) do
+         {:ok, _device} <- handle_device(res.client_id),
+         :ok <- broadcast_data(res) do
       Logger.debug("Received message: #{inspect(res)}")
 
       data = %MqttSeries{
@@ -36,5 +38,10 @@ defmodule Wages.Mqtt.Processor do
       Logger.info("Creating new device with client_id: #{client_id}")
       Devices.create_device(%{client_id: client_id})
     end
+  end
+
+  defp broadcast_data(data) do
+    Logger.debug("Broadcasting data: #{inspect(data)}")
+    Endpoint.broadcast("extractions", "new-point", data)
   end
 end

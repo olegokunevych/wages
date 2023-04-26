@@ -31,5 +31,6 @@ defmodule Wages.Devices.Device do
     device
     |> cast(attrs, [:serial_number, :owner, :firmware_version, :model, :client_id])
     |> validate_required([:client_id])
+    |> unique_constraint(:client_id, name: :devices_client_id_index)
   end
 end

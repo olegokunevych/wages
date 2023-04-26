@@ -5,7 +5,7 @@ defmodule Wages.DevicesTest do
   alias Scrivener.Page
   alias Wages.Devices
   alias Wages.Devices.Device
-  alias Wages.Influxdb.Connection, as: InfluxdbConn
+  alias Wages.Influxdb.ConnectionRead, as: InfluxdbConn
 
   import Wages.DevicesFixtures
 

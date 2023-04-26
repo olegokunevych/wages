@@ -42,15 +42,7 @@ defmodule WagesWeb.DeviceLive.Index do
       page.entries
       |> Enum.map(& &1.client_id)
       |> Devices.get_extraction_series_by_client_ids()
-      |> Enum.reduce(%{}, fn {client_id, series}, acc ->
-        total_extractions =
-          series
-          |> Enum.group_by(& &1["session_id"])
-          |> Map.keys()
-          |> Enum.count()
-
-        Map.put(acc, client_id, total_extractions)
-      end)
+      |> handle_extractions_summary()
 
     page.entries
     |> Enum.with_index()
@@ -82,6 +74,20 @@ defmodule WagesWeb.DeviceLive.Index do
         old_el -> socket |> stream_delete(:devices, old_el)
       end
       |> stream_insert(:devices, el)
+    end)
+  end
+
+  defp handle_extractions_summary({:error, _}), do: %{}
+
+  defp handle_extractions_summary(devices) do
+    Enum.reduce(devices, %{}, fn {client_id, series}, acc ->
+      total_extractions =
+        series
+        |> Enum.group_by(& &1["session_id"])
+        |> Map.keys()
+        |> Enum.count()
+
+      Map.put(acc, client_id, total_extractions)
     end)
   end
 end
