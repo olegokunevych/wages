@@ -1,0 +1,23 @@
+{
+  "name": "wages",
+  "version": "1.0.0",
+  "description": "To start your Phoenix server:",
+  "main": "app.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/olegokunevych/wages.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/olegokunevych/wages/issues"
+  },
+  "homepage": "https://github.com/olegokunevych/wages#readme"
+}
