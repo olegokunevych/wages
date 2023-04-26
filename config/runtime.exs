@@ -177,3 +177,13 @@ config :wages, Wages.Influxdb.Connection,
   port: String.to_integer(System.get_env("INFLUXDB_PORT") || "8086"),
   scheme: "http",
   version: String.to_atom(System.get_env("INFLUXDB_VERSION") || "v2")
+
+# Configure InfluxDB Read connection
+config :wages, Wages.Influxdb.ConnectionRead,
+  auth: [method: :token, token: System.get_env("INFLUXDB_TOKEN")],
+  database: System.get_env("INFLUXDB_BUCKET") || "wages",
+  org: "wages",
+  host: System.get_env("INFLUXDB_HOST") || "influxdb.wages-dev.svc.cluster.local",
+  port: String.to_integer(System.get_env("INFLUXDB_PORT") || "8086"),
+  scheme: "http",
+  version: :v2

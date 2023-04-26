@@ -16,6 +16,7 @@ defmodule Wages.Application do
       Wages.Repo,
       Wages.Cache,
       Wages.Influxdb.Connection,
+      Wages.Influxdb.ConnectionRead,
       # Start the PubSub system
       {Phoenix.PubSub, name: Wages.PubSub},
       # Start Finch

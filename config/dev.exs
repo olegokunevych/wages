@@ -97,7 +97,7 @@ config :wages, Wages.Broadway,
         username: "guest",
         password: "guest",
         host: "kubernetes.local",
-        port: 31883
+        port: 30672
       ],
       qos: [
         # See "Back-pressure and `:prefetch_count`" section
