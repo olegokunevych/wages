@@ -89,7 +89,7 @@ defmodule Wages.Devices do
             )
   @spec get_device_by_client_id(String.t()) :: {:ok, Device.t()} | {:error, :not_found}
   def get_device_by_client_id(client_id) do
-    device = Repo.one(from d in Device, where: d.client_id == ^client_id)
+    device = Repo.one(from(d in Device, where: d.client_id == ^client_id))
 
     case device do
       nil -> {:error, :not_found}
@@ -108,7 +108,7 @@ defmodule Wages.Devices do
     end
   end
 
-  @spec get_extraction_series_by_client_ids([integer()]) :: map()
+  @spec get_extraction_series_by_client_ids([integer()]) :: map() | {:error, :nxdomain}
   def get_extraction_series_by_client_ids(client_ids) do
     with {:ok, measurements} <- do_summary_query(client_ids) do
       Enum.map(measurements, fn measurement ->
