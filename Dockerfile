@@ -1,7 +1,7 @@
 ###################
 # Build container #
 ###################
-FROM elixir:1.14-otp-24-alpine as build
+FROM elixir:1.15-otp-25-alpine as build
 
 ARG MIX_ENV=prod
 ARG SERVICE_PORT=4000
@@ -38,7 +38,7 @@ FROM alpine:3.17.2
 ARG NET_DEVICE=eth0
 # TODO Replace with your application name
 ARG RELEASE_NAME=wages
-ARG RELEASE_VERSION=0.3.0
+ARG RELEASE_VERSION=0.3.1
 ARG SERVICE_PORT=4000
 
 RUN apk --no-cache add ca-certificates ncurses-libs libcrypto1.1 libgcc libstdc++ libssl1.1 openssl-dev ncurses-libs ncurses-terminfo-base ncurses-terminfo
