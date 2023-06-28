@@ -1,7 +1,7 @@
 ###################
 # Build container #
 ###################
-FROM elixir:1.15-otp-25-alpine as build
+FROM elixir:1.15-otp-26-alpine as build
 
 ARG MIX_ENV=prod
 ARG SERVICE_PORT=4000

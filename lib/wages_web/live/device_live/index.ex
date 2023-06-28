@@ -42,7 +42,6 @@ defmodule WagesWeb.DeviceLive.Index do
       page.entries
       |> Enum.map(& &1.client_id)
       |> Devices.get_extraction_series_by_client_ids()
-      |> IO.inspect(label: :INFLUXDB)
       |> handle_extractions_summary()
 
     page.entries
@@ -77,6 +76,8 @@ defmodule WagesWeb.DeviceLive.Index do
       |> stream_insert(:devices, el)
     end)
   end
+
+  defp handle_extractions_summary({:error, _}), do: %{}
 
   defp handle_extractions_summary(devices) do
     Enum.reduce(devices, %{}, fn {client_id, series}, acc ->

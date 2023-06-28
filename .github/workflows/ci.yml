@@ -18,7 +18,6 @@ permissions:
 jobs:
   run-checks:
     runs-on: ubuntu-latest
-    container: node:10.18-jessie
     services:
       postgres:
         image: postgres:12
@@ -30,18 +29,27 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-elixir@v1
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
         with:
+          otp-version: "25.3.2"
           elixir-version: "1.15.0"
-          otp-version: "25.2.3"
-      - run: mix deps.get
-      - run: mix deps.compile
-      - uses: actions/setup-node@v3
+          hexpm-mirrors: |
+            https://builds.hex.pm
+            https://cdn.jsdelivr.net/hex
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: mix deps.get
+      - name: Compile
+        run: mix deps.compile
+      - name: Setup node
+        uses: actions/setup-node@v3
         with:
           node-version: 14
-      - run: npm install --prefix assets --legacy-peer-deps
-      - run: mix check --except dialyzer --except credo
-        env:
-          DATABASE_HOST: postgres
+      - name: Install node dependencies
+        run: npm install --prefix assets --legacy-peer-deps
+      - name: Run mix run-checks
+        run: mix check --except dialyzer --except credo
