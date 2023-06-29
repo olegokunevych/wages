@@ -49,7 +49,7 @@ config :esbuild,
   version: "0.14.41",
   default: [
     args:
-      ~w(js/app.js js/linecharts.js js/live_view_hooks/index.js js/live_view_hooks/line_chart_hook.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
+      ~w(js/app.js js/linechart.js js/live_view_hooks/index.js js/live_view_hooks/line_chart_hook.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
     cd: Path.expand("../assets", __DIR__),
     env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
   ]

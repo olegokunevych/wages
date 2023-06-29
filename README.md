@@ -32,6 +32,15 @@ Kubernetes/Helm approach is used for deployment. The deployment is defined in se
 
 Configuration is done using environment variables. The environment variables are used to configure the Postgresql connection, Influxdb connection, RabbitMQ connection, etc. Sample configuration is provided in `.env.sample` file.
 
+## Known issues
+
+To test javascript websocket connection locally, path to websocket should be changed, in order to do it, replace line:
+`let liveSocket = new LiveSocket("/wages/live", Socket, { hooks: LiveViewHooks, params: { _csrf_token: csrfToken } })`
+with
+`let liveSocket = new LiveSocket("/live", Socket, { hooks: LiveViewHooks, params: { _csrf_token: csrfToken } })`
+Repository points websocket connection path to `/wages/live` for Kubernetes deployment approach.
+Need to find a way to make this path configurable.
+
 ## Testing
 
 The tests are implemented using `ExUnit` library. The tests are located in `test` directory. The tests are run using `mix test` command.
