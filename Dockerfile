@@ -28,7 +28,7 @@ RUN mix deps.get --only ${MIX_ENV} && \
 # RUN npm run deploy --prefix ./assets
 # RUN mix phx.digest
 RUN mix assets.setup
-RUN mix assets.build
+RUN mix assets.deploy
 
 ########################
 # Deployable container #
